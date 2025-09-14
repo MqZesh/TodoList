@@ -1,8 +1,35 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { todoSlice } from "./todoSlice";
+import todoReducer from "./todoSlice";
+
+function loadFromLocal() {
+  try {
+    const data = localStorage.getItem("todos");
+    if (data === null) {
+      return undefined;
+    } else {
+      return { todo: { todos: JSON.parse(data) } };
+    }
+  } catch (error) {
+    console.error("localstorage parse error", error);
+    return undefined;
+  }
+}
 
 export const store = configureStore({
-  reducer: {},
+  preloadedState: loadFromLocal(),
+  reducer: {
+    todo: todoReducer,
+  },
+});
+
+store.subscribe(() => {
+  try {
+    const state = store.getState();
+    const todos = state.todo.todos;
+    localStorage.setItem("todos", JSON.stringify(todos));
+  } catch (error) {
+    console.error("localstorage save error", error);
+  }
 });
 
 export type RootState = ReturnType<typeof store.getState>;
