@@ -21,13 +21,13 @@ Bu proje, React ve Redux kullanarak geliştirdiğim bir Todo App'tir. Bu uygulam
 1. Projeyi klonlayın:
 
 ```bash
-git clone <repo-link>
+git clone https://github.com/MqZesh/TodoList
 ```
 
 2. Proje klasörüne girin:
 
 ```bash
-cd my-todo-app
+cd TodoList
 ```
 
 3. Bağımlılıkları yükleyin:
