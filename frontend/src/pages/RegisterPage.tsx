@@ -49,7 +49,7 @@ export default function RegisterPage({ activatedPage }: PageProps) {
         password,
       });
       alert(response.data.message);
-      navigate("/main");
+      navigate("/login");
     } catch (err: any) {
       if (err.response && err.response.data && err.response.data.error) {
         alert(err.response.data.error);

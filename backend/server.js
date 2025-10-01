@@ -18,6 +18,7 @@ app.use(express.json());
 app.get("/", (req, res) => res.send("TodoList Backend çalışıyor!"));
 
 app.use("/auth", require("./routes/auth"));
+app.use("/todos", require("./routes/todos"));
 
 app.listen(port, () => {
   console.log(`Server ${port} portunda çalışıyor`);

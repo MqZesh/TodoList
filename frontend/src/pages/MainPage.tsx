@@ -3,7 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import type { RootState } from "../redux/store";
 import type { Todo } from "../types";
-import { addTodo, removeTodo, toggleTodo } from "../redux/todoSlice";
+import {
+  addTodo,
+  removeTodo,
+  toggleTodo,
+  setTodos,
+  addTodoFromServer,
+} from "../redux/todoSlice";
 import TodoInput from "../comp/TodoInput";
 import TodoList from "../comp/TodoList";
 import axios from "axios";
@@ -43,6 +49,16 @@ export default function MainPage() {
           const { user } = response.data;
           setUserName(user.userName);
           setIsAuthenticated(true);
+          try {
+            const todosRes = await axios.get(`http://localhost:3000/todos`, {
+              withCredentials: true,
+            });
+            if (todosRes.status === 200) {
+              dispatch(setTodos(todosRes.data.todos));
+            }
+          } catch (e) {
+            console.error(e);
+          }
         }
       } catch (error) {
         navigate("/login");
@@ -65,8 +81,22 @@ export default function MainPage() {
     category: string,
     date: string
   ) => {
-    dispatch(addTodo({ text, description, category, date }));
-    setEditingTodo(null);
+    const run = async () => {
+      try {
+        const res = await axios.post(
+          `http://localhost:3000/todos`,
+          { text, description, category, date },
+          { withCredentials: true }
+        );
+        if (res.status === 201) {
+          dispatch(addTodoFromServer(res.data.todo));
+          setEditingTodo(null);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    void run();
   };
 
   const filteredTodos = allTodos.filter((todo) => {
@@ -78,11 +108,37 @@ export default function MainPage() {
   });
 
   const handleToggleTodo = (id: number, forceTrue?: boolean) => {
-    dispatch(toggleTodo({ id, forceTrue }));
+    const run = async () => {
+      try {
+        const res = await axios.patch(
+          `http://localhost:3000/todos/${id}/toggle`,
+          { forceTrue },
+          { withCredentials: true }
+        );
+        if (res.status === 200) {
+          dispatch(toggleTodo({ id, forceTrue: res.data.todo.completed }));
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    void run();
   };
 
   const handleRemoveTodo = (id: number) => {
-    dispatch(removeTodo(id));
+    const run = async () => {
+      try {
+        const res = await axios.delete(`http://localhost:3000/todos/${id}`, {
+          withCredentials: true,
+        });
+        if (res.status === 200) {
+          dispatch(removeTodo(id));
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    void run();
   };
 
   const handleEditTodo = (todo: Todo) => {

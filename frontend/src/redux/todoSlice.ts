@@ -10,6 +10,12 @@ const todoSlice = createSlice({
   name: "todo",
   initialState,
   reducers: {
+    setTodos: (state, action: PayloadAction<Todo[]>) => {
+      state.todos = action.payload;
+    },
+    addTodoFromServer: (state, action: PayloadAction<Todo>) => {
+      state.todos.unshift(action.payload);
+    },
     addTodo: (
       state,
       action: PayloadAction<{
@@ -49,5 +55,5 @@ const todoSlice = createSlice({
   },
 });
 
-export const { addTodo, toggleTodo, removeTodo } = todoSlice.actions;
+export const { setTodos, addTodoFromServer, addTodo, toggleTodo, removeTodo } = todoSlice.actions;
 export default todoSlice.reducer;

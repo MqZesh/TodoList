@@ -51,7 +51,7 @@ router.post("/register", async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     await pool.query(
-      "INSERT INTO users (userName, email, password_hash) VALUES ($1, $2, $3)",
+      "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3)",
       [userName, email, hashedPassword]
     );
     res.status(201).json({ message: "Kayıt başarılı" });
@@ -81,7 +81,7 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { userId: user.user_id, email: user.email, userName: user.username },
+      { userId: user.id, email: user.email, userName: user.username },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
